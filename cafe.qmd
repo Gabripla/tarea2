@@ -1,0 +1,97 @@
+---
+title: "tarea 2 cafe"
+format: html
+editor: visual
+---
+
+## Desarrollo de un documento Quarto con bloques de código en R que va a generar tablas y gráficos estadísticos de datos sobre calidad de café. Corresponden a muestras de café de diferentes partes del mundo, para las que se registraron propiedades como país de origen, altitud, variedad, color y método de procesamiento y se evaluaran características como aroma, sabor, acidez y puntaje total, entre otras.
+
+## carga de paquetes
+
+```{r}
+#| label: carga-datos
+#| warning: false
+
+library(DT)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(readr)
+library(plotly)
+```
+
+## Tabla de datos
+
+```{r}
+read_csv("C:/Users/jerem/OneDrive/Documentos/coffee-quality.csv")
+```
+
+```{r}
+
+if (!requireNamespace("DT", quietly = TRUE)) {
+  install.packages("DT")
+}
+
+
+library(DT)
+
+ 
+coffee_data <- read.csv("C:/Users/jerem/OneDrive/Documentos/coffee-quality.csv")
+
+
+datatable(coffee_data[, c("Country_of_Origin", "Variety", "Color", "Altitude", "Total_Cup_Points")],
+          options = list(pageLength = 10, lengthMenu = c(10, 20, 50)),
+          filter = "top")
+```
+
+## Histograma
+
+```{r}
+# Supongamos que tienes los datos del café en un dataframe llamado 'coffee_data'
+
+p <- ggplot(coffee_data, aes(x = Total_Cup_Points)) +
+  geom_histogram(binwidth = 1, color = "black", fill = "blue") +
+  geom_density(alpha = 0.2, fill = "orange") +
+  labs(title = "Distribución de Total Cup Points",
+       x = "Total Cup Points",
+       y = "Frecuencia") +
+  theme_grey()
+
+# Convertir el gráfico a plotly para hacerlo interactivo
+ggplotly(p)
+```
+
+## Gráfico de dispersión
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+
+
+p <- ggplot(coffee_data, aes(x = Altitude, y = Total_Cup_Points)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "green") +
+  labs(title = "Relación entre Altitude y Total Cup Points",
+       x = "Altitude",
+       y = "Total Cup Points") +
+  theme_grey()
+
+
+ggplotly(p, tooltip = c("Altitude", "Total_Cup_Points"))
+```
+
+## Gráfico de caja
+
+```{r}
+p <- ggplot(coffee_data, aes(x = Color, y = Total_Cup_Points)) +
+  geom_boxplot() +
+  labs(title = "Distribución de Total Cup Points por Color",
+       x = "Color",
+       y = "Total Cup Points") +
+  theme_grey() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+ggplotly(p)
+```
